@@ -68,12 +68,6 @@ const App = () => {
     );
   };
 
-  const getBestQuote = () => {
-    return Object.keys(points).reduce((a, b) =>
-      points[a] > points[b] ? a : b
-    );
-  };
-
   return (
     <>
       <CurrentAnecdote
@@ -83,7 +77,7 @@ const App = () => {
       <Button onClick={incrementVote} text="vote" />
       <Button onClick={changeAnecdote} text="next anecdote" />
       <AnecdoteWithMostVotes
-        quote={anecdotes[getBestQuote()]}
+        quote={anecdotes[getBestScore()]}
         score={points[getBestScore()]}
       />
     </>
