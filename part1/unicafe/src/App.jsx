@@ -56,7 +56,7 @@ const App = () => {
         bad={bad}
         all={all}
         average={average}
-        positive={positivePercentage}
+        positive={`${positivePercentage} %`}
       />
     </>
   );
