@@ -1,8 +1,28 @@
 import { useState } from "react";
 
+const Header = ({ text }) => <h2>{text}</h2>;
+
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
 const DisplayVotes = ({ score }) => <div>has {score} votes</div>;
+
+const CurrentAnecdote = ({ anecdote, score }) => {
+  return (
+    <>
+      <Header text="Anecdote of the day" />
+      <div>{anecdote}</div>
+      <DisplayVotes score={score} />
+    </>
+  );
+};
+
+const AnecdoteWithMostVotes = ({ score, quote }) => (
+  <>
+    <Header text="Anecdote with most votes" />
+    <div>{quote}</div>
+    <DisplayVotes score={score} />
+  </>
+);
 
 const App = () => {
   const anecdotes = [
@@ -42,12 +62,30 @@ const App = () => {
     setPoints(newPoints);
   };
 
+  const getBestScore = () => {
+    return Object.keys(points).reduce((a, b) =>
+      points[a] > points[b] ? a : b
+    );
+  };
+
+  const getBestQuote = () => {
+    return Object.keys(points).reduce((a, b) =>
+      points[a] > points[b] ? a : b
+    );
+  };
+
   return (
     <>
-      <div>{anecdotes[selected]}</div>
-      <DisplayVotes score={points[selected]} />
+      <CurrentAnecdote
+        anecdote={anecdotes[selected]}
+        score={points[selected]}
+      />
       <Button onClick={incrementVote} text="vote" />
       <Button onClick={changeAnecdote} text="next anecdote" />
+      <AnecdoteWithMostVotes
+        quote={anecdotes[getBestQuote()]}
+        score={points[getBestScore()]}
+      />
     </>
   );
 };
