@@ -20,7 +20,10 @@ const App = () => {
     return Math.floor(Math.random() * max);
   }
 
-  const changeAnecdote = () => setSelected(getRandomInt(anecdotes.length));
+  const changeAnecdote = () => {
+    console.log(anecdotes.length);
+    setSelected(getRandomInt(anecdotes.length));
+  };
 
   return (
     <>
