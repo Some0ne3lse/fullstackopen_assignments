@@ -4,7 +4,7 @@ const Header = ({ text }) => <h1>{text}</h1>;
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
-const DisplayScore = ({ type, counter }) => (
+const Statistics = ({ type, counter }) => (
   <div>
     {type} {counter}
   </div>
@@ -31,12 +31,12 @@ const App = () => {
       <Button onClick={handleNeutralClick} text="neutral" />
       <Button onClick={handleBadClick} text="bad" />
       <Header text="statistics" />
-      <DisplayScore type="good" counter={good} />
-      <DisplayScore type="neutral" counter={neutral} />
-      <DisplayScore type="bad" counter={bad} />
-      <DisplayScore type="all" counter={all} />
-      <DisplayScore type="average" counter={average} />
-      <DisplayScore type="positive" counter={`${positivePercentage} %`} />
+      <Statistics type="good" counter={good} />
+      <Statistics type="neutral" counter={neutral} />
+      <Statistics type="bad" counter={bad} />
+      <Statistics type="all" counter={all} />
+      <Statistics type="average" counter={average} />
+      <Statistics type="positive" counter={`${positivePercentage} %`} />
     </div>
   );
 };
