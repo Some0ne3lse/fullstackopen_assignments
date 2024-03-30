@@ -1,66 +1,53 @@
-const Header = (props) => {
-  return <h1>{props.course}</h1>;
-};
-
-const Total = ({ parts }) => {
-  let total = parts.reduce((s, p) => s + p.exercises, 0);
-  return <p>total of {total} exercises</p>;
-};
-
-const Part = ({ parts }) => {
-  return (
-    <li>
-      {parts.name} {parts.exercises}
-    </li>
-  );
-};
-
-const Content = ({ parts }) => {
-  return (
-    <div>
-      <ul>
-        {parts.map((parts) => (
-          <Part key={parts.id} parts={parts} />
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const Course = ({ course }) => {
-  return (
-    <>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </>
-  );
-};
+import Course from "./components/Course";
+import "./styles.css";
 
 const App = () => {
-  const course = {
-    id: 1,
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-        id: 1,
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-        id: 2,
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-        id: 3,
-      },
-    ],
-  };
+  const courses = [
+    {
+      name: "Half Stack application development",
+      id: 1,
+      parts: [
+        {
+          name: "Fundamentals of React",
+          exercises: 10,
+          id: 1,
+        },
+        {
+          name: "Using props to pass data",
+          exercises: 7,
+          id: 2,
+        },
+        {
+          name: "State of a component",
+          exercises: 14,
+          id: 3,
+        },
+        {
+          name: "Redux",
+          exercises: 11,
+          id: 4,
+        },
+      ],
+    },
+    {
+      name: "Node.js",
+      id: 2,
+      parts: [
+        {
+          name: "Routing",
+          exercises: 3,
+          id: 1,
+        },
+        {
+          name: "Middlewares",
+          exercises: 7,
+          id: 2,
+        },
+      ],
+    },
+  ];
 
-  return <Course course={course} />;
+  return <Course course={courses} />;
 };
 
 export default App;
