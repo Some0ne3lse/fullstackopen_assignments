@@ -10,6 +10,10 @@ const App = () => {
     const personObject = {
       name: newPerson,
     };
+    if (persons.some((e) => e.name === personObject.name)) {
+      alert(`${personObject.name} is already added to phonebook`);
+      return;
+    }
     setPersons(persons.concat(personObject));
     setNewPerson("");
   };
