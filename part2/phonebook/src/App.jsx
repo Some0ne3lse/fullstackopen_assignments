@@ -35,8 +35,10 @@ const App = () => {
   };
 
   const handleFilter = (event) => {
-    const value = event.target.value;
-    const filtered = persons.filter((person) => person.name.includes(value));
+    const value = event.target.value.toLowerCase();
+    const filtered = persons.filter((person) =>
+      person.name.toLowerCase().includes(value)
+    );
     setFilteredNames(filtered);
   };
 
