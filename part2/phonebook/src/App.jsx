@@ -29,11 +29,9 @@ const App = () => {
       alert(`${personObject.name} is already added to phonebook`);
       return;
     }
-    axios
-      .post("http://localhost:3001/persons", personObject)
-      .then((response) => {
-        setPersons(persons.concat(personObject));
-      });
+    personService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+    });
     setNewName("");
     setNewNumber("");
     setShowAll(true);
