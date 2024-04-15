@@ -1,41 +1,9 @@
 import { useState, useEffect } from "react";
 import "./styles.css";
 import axios from "axios";
-
-const Filter = ({ handleFilter }) => (
-  <div>
-    filter shown with <input onChange={handleFilter}></input>
-  </div>
-);
-
-const PersonForm = (props) => {
-  return (
-    <form onSubmit={props.addPerson}>
-      <div>
-        name: <input value={props.newName} onChange={props.handleNameChange} />
-      </div>
-      <div>
-        number:{" "}
-        <input value={props.newNumber} onChange={props.handleNumberChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-
-const Persons = (props) => {
-  return (
-    <ul>
-      {props.namesToShow.map((person) => (
-        <li key={person.name}>
-          {person.name} {person.number}
-        </li>
-      ))}
-    </ul>
-  );
-};
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -60,7 +28,11 @@ const App = () => {
       alert(`${personObject.name} is already added to phonebook`);
       return;
     }
-    setPersons(persons.concat(personObject));
+    axios
+      .post("http://localhost:3001/persons", personObject)
+      .then((response) => {
+        setPersons(persons.concat(personObject));
+      });
     setNewName("");
     setNewNumber("");
     setShowAll(true);
