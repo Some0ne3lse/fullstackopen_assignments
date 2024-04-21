@@ -37,6 +37,16 @@ const App = () => {
     setShowAll(true);
   };
 
+  const removePerson = (id) => {
+    const person = persons.find((p) => p.id === id);
+    console.log(person);
+    personService.remove(person);
+    // // const newList = (persons.filter(p => p.id === id))
+    // personService.remove(person).then((returnedPerson) => {
+    //   setPersons(persons.filter((returnedPerson) => returnedPerson.id === id));
+    // });
+  };
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -69,7 +79,15 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons namesToShow={namesToShow} />
+      <ul>
+        {namesToShow.map((person) => (
+          <Persons
+            key={person.name}
+            person={person}
+            deleteButton={() => removePerson(person.id)}
+          />
+        ))}
+      </ul>
     </div>
   );
 };
