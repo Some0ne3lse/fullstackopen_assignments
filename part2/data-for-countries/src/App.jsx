@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import countryService from "./services/country";
+
 const CountriesToShow = ({ countries, showTen }) => {
   if (!showTen) {
     return null;
@@ -25,12 +27,27 @@ const ShowDetails = ({ country, showMessage }) => {
   if (!showMessage) {
     return null;
   }
-  return <div>{country}</div>;
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <p>capital {country.capital}</p>
+      <p>area {country.area}</p>
+      <h2>languages:</h2>
+      <ul>
+        {Object.keys(country.languages).map((key, index) => (
+          <li key={index}>{country.languages[key]}</li>
+        ))}
+      </ul>
+      <img src={country.flags.png} alt="Country flag" />
+    </div>
+  );
 };
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [fullCountry, setFullCountry] = useState({});
+  const [country, setCountry] = useState("finland");
 
   useEffect(() => {
     axios
@@ -46,7 +63,19 @@ function App() {
       findCountry.name.common.toLowerCase().includes(value)
     );
     setFilteredCountries(filtered);
+    if (filtered.length == 1) {
+      let first = filtered[0];
+      if (first) {
+        setCountry(first.name.common);
+      }
+    }
   };
+
+  useEffect(() => {
+    countryService.getOne(country).then((initialCountry) => {
+      setFullCountry(initialCountry);
+    });
+  }, [country]);
 
   let showTen = false;
   let showMessage = false;
@@ -77,7 +106,7 @@ function App() {
       </div>
       <CountriesToShow countries={filteredCountries} showTen={showTen} />
       <ShowMoreThanTenMessage message="message" showTen={showMessage} />
-      <ShowDetails country="details" showMessage={showDetails} />
+      <ShowDetails country={fullCountry} showMessage={showDetails} />
     </div>
   );
 }
