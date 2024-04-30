@@ -105,7 +105,10 @@ function App() {
         find countries <input onChange={handleFilter}></input>
       </div>
       <CountriesToShow countries={filteredCountries} showTen={showTen} />
-      <ShowMoreThanTenMessage message="message" showTen={showMessage} />
+      <ShowMoreThanTenMessage
+        message="Too many matches, specify another filter"
+        showTen={showMessage}
+      />
       <ShowDetails country={fullCountry} showMessage={showDetails} />
     </div>
   );
