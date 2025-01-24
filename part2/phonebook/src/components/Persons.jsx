@@ -1,17 +1,13 @@
-const Persons = ({ person, deleteButton }) => {
+const Persons = ({ personsList, deleteFunction }) => {
   return (
-    <li>
-      {person.name} {person.number}{" "}
-      <button onClick={deleteButton}>Delete</button>
-    </li>
-    // <ul>
-    //   {props.namesToShow.map((person) => (
-    //     <li key={person.name}>
-    //       {person.name} {person.number}{" "}
-    //       <button onClick={props.deleteButton}>Delete</button>
-    //     </li>
-    //   ))}
-    // </ul>
+    <div>
+      {personsList.map((p) => (
+        <div key={p.name}>
+          {p.name} {p.number}{" "}
+          <button onClick={() => deleteFunction(p.id)}>delete</button>
+        </div>
+      ))}
+    </div>
   );
 };
 

@@ -11,13 +11,13 @@ const create = (newObject) => {
   return request.then((response) => response.data);
 };
 
-const update = (idToUpdate, updatedPerson) => {
-  const request = axios.put(baseUrl + "/" + idToUpdate, updatedPerson);
+const update = (id, newObject) => {
+  const request = axios.put(`${baseUrl}/${id}`, newObject);
   return request.then((response) => response.data);
 };
 
-const remove = (objectToDelete) => {
-  const request = axios.delete(baseUrl + "/" + objectToDelete);
+const remove = (idToRemove) => {
+  const request = axios.delete(`${baseUrl}/${idToRemove}`);
   return request.then((response) => response.data);
 };
 

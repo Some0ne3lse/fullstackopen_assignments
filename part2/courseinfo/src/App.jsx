@@ -1,5 +1,4 @@
 import Course from "./components/Course";
-import "./styles.css";
 
 const App = () => {
   const courses = [
@@ -47,7 +46,7 @@ const App = () => {
     },
   ];
 
-  return <Course course={courses} />;
+  return <Course courses={courses} />;
 };
 
 export default App;

@@ -1,117 +1,138 @@
 import { useEffect, useState } from "react";
+import Search from "./components/Search";
 import axios from "axios";
+import ErrorMessage from "./components/ErrorMessage";
+import TenOrLessCountries from "./components/TenOrLessCountries";
+import OneCountry from "./components/OneCountry";
 
-import countryService from "./services/country";
-
-const CountriesToShow = ({ countries, showTen }) => {
-  if (!showTen) {
-    return null;
-  }
-  return (
-    <ul>
-      {countries.map((country) => (
-        <li key={country.name.common}>{country.name.common}</li>
-      ))}
-    </ul>
-  );
-};
-
-const ShowMoreThanTenMessage = ({ message, showTen }) => {
-  if (!showTen) {
-    return null;
-  }
-  return <div>{message}</div>;
-};
-
-const ShowDetails = ({ country, showMessage }) => {
-  if (!showMessage) {
-    return null;
-  }
-  return (
-    <div>
-      <h1>{country.name.common}</h1>
-      <p>capital {country.capital}</p>
-      <p>area {country.area}</p>
-      <h2>languages:</h2>
-      <ul>
-        {Object.keys(country.languages).map((key, index) => (
-          <li key={index}>{country.languages[key]}</li>
-        ))}
-      </ul>
-      <img src={country.flags.png} alt="Country flag" />
-    </div>
-  );
-};
-
-function App() {
-  const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]);
-  const [fullCountry, setFullCountry] = useState({});
-  const [country, setCountry] = useState("finland");
+const App = () => {
+  const [allData, setAllData] = useState([]);
+  const [searchCountries, setSearchCountries] = useState("");
+  const [country, setCountry] = useState([]);
+  const [finalCountry, setFinalCountry] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     axios
-      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
+      .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
       .then((response) => {
-        setCountries(response.data);
+        setAllData(response.data);
+      })
+      .catch(() => {
+        setErrorMessage("Could not fetch countries");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   }, []);
 
-  const handleFilter = (event) => {
-    const value = event.target.value.toLowerCase();
-    const filtered = countries.filter((findCountry) =>
-      findCountry.name.common.toLowerCase().includes(value)
+  useEffect(() => {
+    const filteredCountryArray = allData.filter(
+      (d) =>
+        d.name.common.toLowerCase().includes(searchCountries) ||
+        d.name.official.toLowerCase().includes(searchCountries)
     );
-    setFilteredCountries(filtered);
-    if (filtered.length == 1) {
-      let first = filtered[0];
-      if (first) {
-        setCountry(first.name.common);
-      }
-    }
-  };
+    setCountry(filteredCountryArray);
+  }, [allData, searchCountries]);
 
   useEffect(() => {
-    countryService.getOne(country).then((initialCountry) => {
-      setFullCountry(initialCountry);
-    });
-  }, [country]);
+    if (country.length === 1) {
+      setFinalCountry(country[0]);
+    }
+  }, [country, finalCountry]);
 
-  let showTen = false;
-  let showMessage = false;
-  let showDetails = false;
+  useEffect(() => {
+    if (finalCountry) {
+      const api_key = import.meta.env.VITE_SOME_KEY;
 
-  if (filteredCountries.length < 11 && filteredCountries.length > 1) {
-    showTen = true;
-    showDetails = false;
-    showMessage = false;
-  } else if (filteredCountries.length > 10) {
-    showMessage = true;
-    showTen = false;
-    showDetails = false;
-  } else if (filteredCountries.length === 1) {
-    showDetails = true;
-    showMessage = false;
-    showTen = false;
-  } else {
-    showTen = false;
-    showDetails = false;
-    showMessage = false;
+      const lat = finalCountry.capitalInfo.latlng[0];
+      const lon = finalCountry.capitalInfo.latlng[1];
+
+      axios
+        .get(
+          `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily,alerts&units=metric&appid=${api_key}`
+        )
+        .then((response) => {
+          setWeather(response.data);
+        })
+        .catch(() => {
+          setErrorMessage("Could not fetch weather data");
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
+    }
+  }, [finalCountry]);
+
+  const handleCountriesSearch = (event) => {
+    const searchedValue = event.target.value.toLowerCase();
+    setSearchCountries(searchedValue);
+  };
+
+  const handleShowCountryButton = (name) => {
+    setSearchCountries(name.toLowerCase());
+  };
+
+  if (allData.length == 0) {
+    return (
+      <div>
+        <div>Could not fetch data</div>
+        <ErrorMessage errorMessage={errorMessage} />
+      </div>
+    );
+  }
+
+  if (country.length === 0) {
+    return (
+      <div>
+        <Search value={searchCountries} onChange={handleCountriesSearch} />
+        <ErrorMessage errorMessage={errorMessage} />
+
+        <div>No country with this name</div>
+      </div>
+    );
+  }
+
+  if (country.length > 10) {
+    return (
+      <div>
+        <Search value={searchCountries} onChange={handleCountriesSearch} />
+        <ErrorMessage errorMessage={errorMessage} />
+        <p>Too many matches, specify another filter</p>
+      </div>
+    );
+  }
+
+  if (country.length <= 10 && country.length > 1) {
+    return (
+      <div>
+        <Search value={searchCountries} onChange={handleCountriesSearch} />
+        <ErrorMessage errorMessage={errorMessage} />
+        <TenOrLessCountries
+          countries={country}
+          onClick={handleShowCountryButton}
+        />
+      </div>
+    );
+  }
+
+  if (finalCountry) {
+    return (
+      <div>
+        <Search value={searchCountries} onChange={handleCountriesSearch} />
+        <ErrorMessage errorMessage={errorMessage} />
+        <OneCountry finalCountry={finalCountry} weather={weather} />
+      </div>
+    );
   }
 
   return (
     <div>
-      <div>
-        find countries <input onChange={handleFilter}></input>
-      </div>
-      <CountriesToShow countries={filteredCountries} showTen={showTen} />
-      <ShowMoreThanTenMessage
-        message="Too many matches, specify another filter"
-        showTen={showMessage}
-      />
-      <ShowDetails country={fullCountry} showMessage={showDetails} />
+      <div>Something went wrong</div>
+      <ErrorMessage errorMessage={errorMessage} />
     </div>
   );
-}
+};
 
 export default App;
